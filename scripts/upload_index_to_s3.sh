@@ -6,9 +6,15 @@ profile_name="yb-personal"
 index_file="index.html"
 
 # Generate index.html
+echo "<h1>Big Data Workshop</h1>" > "${index_file}"
+echo "<p>Click on a file name to download it. Click on a directory to open it.</p>" > "${index_file}"
+echo "<ul>" > "${index_file}"
 aws s3 ls "s3://${bucket_name}/" --recursive --profile "${profile_name}" | \
-awk '{$1=$2=$3=""; print "<li><a href=\"https://${bucket_name}.s3.amazonaws.com" $4 "\">" $4 "</a></li>"}' \
-> "${index_file}"
+awk '{sub(/^ +/, "", $0); for (i=4; i<=NF; i++) printf "%s%s", $i, (i<NF ? OFS : "\n")}' | \
+while read -r line; do
+    echo "<li><a href=\"https://${bucket_name}.s3.amazonaws.com/${line}\">${line}</a></li>" >> "${index_file}"
+done
+echo "</ul>" >> "${index_file}"
 
 # Upload index.html to S3 bucket
 aws s3 cp "${index_file}" "s3://${bucket_name}/${index_file}" --profile "${profile_name}"

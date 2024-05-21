@@ -24,8 +24,8 @@ class ServiceBase:
             Filename=file_name,
             Bucket=self.bucket_name,
             Key=f"{dt_prefix} measurements.txt",
-            # trying to boost performance with these configs
-            Config=TransferConfig(multipart_threshold=8 * MB, multipart_chunksize=8 * MB, max_concurrency=50),
+            # trying to boost performance with these configs (requires some tinkering)
+            Config=TransferConfig(multipart_threshold=8 * MB, multipart_chunksize=8 * 2 * MB, max_concurrency=200),
         )
 
     def remove_s3_file(self, file_name: str):
