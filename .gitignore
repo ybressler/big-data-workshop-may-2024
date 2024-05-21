@@ -1,0 +1,17 @@
+# Ignore default stuff
+.idea/
+.DS_Store
+.pytest_cache
+.ruff_cache
+__pycache__
+
+# Ignore secrets
+*.env
+secrets
+
+
+# ignore coverage reports
+.coverage
+htmlcov
+/tf/pytest.xml
+/tf/pytest-coverage.txt

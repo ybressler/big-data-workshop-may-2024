@@ -1,0 +1,32 @@
+# Install Python dependencies then run tests
+# Documentation for setup-python: https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md
+
+name: pytest
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install poetry
+      run: pipx install poetry
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'poetry'
+    - name: Install dependencies
+      run: poetry install
+
+    - name: Run pytest + Build coverage file
+      run: |
+        poetry run pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered | tee pytest-coverage.txt
