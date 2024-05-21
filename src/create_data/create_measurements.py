@@ -4,7 +4,11 @@ Shamelessly copies from https://github.com/ifnesi/1brc/blob/main/createMeasureme
 """
 
 import argparse
+from pathlib import Path
+
+import pgzip
 import time
+from functools import partial
 
 import numpy as np
 import polars as pl
@@ -446,19 +450,37 @@ class CreateMeasurement:
         records: int = 1_000_000_000,
         sep: str = ";",
         std_dev: float = 10,
+        compressed: bool = True,
     ) -> None:
+        """
+        :param file_name:
+        :param records:
+        :param sep:
+        :param std_dev:
+        :param compressed: Write as txt or compressed txt
+        :return:
+        """
+        context = partial(pgzip.open, thread=8, blocksize=2 * 10**8) if compressed else open
+
+        if compressed and not file_name.endswith(".gz"):
+            file_name = f"{file_name}.gz"
+
         print(f"Creating measurement file '{file_name}' with {records:,} measurements...")
         start = time.time()
         batches = max(records // 10_000_000, 1)
         batch_ends = np.linspace(0, records, batches + 1).astype(int)
 
-        with open(file_name, "w") as f:
+        with context(file_name, "wb") as f:
             for i in tqdm(range(batches)):
                 from_, to = batch_ends[i], batch_ends[i + 1]
                 data = self.generate_batch(std_dev, to - from_)
                 data.write_csv(f, separator=sep, float_precision=1, include_header=False)
 
             print(f"Created file '{file_name}' with {to:,} measurements in {time.time() - start:.2f} seconds")
+
+        # Current size
+        file_size = Path(file_name).stat().st_size
+        print(f"{file_name} is {file_size/1_000_000:,.3f} megabytes")
 
 
 if __name__ == "__main__":

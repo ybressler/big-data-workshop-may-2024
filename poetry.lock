@@ -389,6 +389,17 @@ files = [
 ]
 
 [[package]]
+name = "pgzip"
+version = "0.3.5"
+description = "A multi-threading implementation of Python gzip module"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "pgzip-0.3.5-py3-none-any.whl", hash = "sha256:4e13ab66ecface5c51c5af51d8cd676aa51675cf85df000f501a86cf38c208c1"},
+    {file = "pgzip-0.3.5.tar.gz", hash = "sha256:dd35510f59f6bd6b64e31c4baf90c10cdbb2775235fcc079b14b404fbd7f46bf"},
+]
+
+[[package]]
 name = "platformdirs"
 version = "4.2.1"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`."
@@ -756,4 +767,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "b7a05c41c30b7ac2ad98a0d1dcccaa20a3e2e11ba980093ffb3a63445fe3d134"
+content-hash = "b5961f8f66f9b0212b51e18fe21c27c93a1f6b84823b3e520f57858a5dab7d9e"

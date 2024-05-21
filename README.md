@@ -14,3 +14,7 @@ We're going to create "a lot" of data and store it in S3
 make create-data
 ```
 View data here: https://yb-big-data-workshop-1.s3-us-west-2.amazonaws.com/index.html
+
+## Compressing data
+Compressing the data decreases its size by 10X. We can compress it when writing directly in polars
+using `pgzip.open(...)`. (Note: `pgzip` is the parallel implementation of `gzip`.)
