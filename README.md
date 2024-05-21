@@ -1,4 +1,4 @@
-# Quest in the Clouds
+# Big Data Workshop
 Placeholder for something meaningful.
 
 ## Getting Started:
@@ -8,9 +8,9 @@ Placeholder for something meaningful.
 3. Install pre-commit hooks: `pre-commit run -a`
 
 
-# Quest 1:
-Run data extraction like so:
+# Make Data
+We're going to create "a lot" of data and store it in S3
 ```shell
-make quest-1
+make make-data
 ```
-View data here: https://quest-in-the-clouds-quest-1.s3.amazonaws.com/index.html
+View data here: https://yb-big-data-workshop-1.s3-us-west-2.amazonaws.com/index.html

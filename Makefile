@@ -3,15 +3,10 @@
 setup:
 	poetry install
 
-quest-1:
+make-data:
 
-	poetry run python src/quest_1/quest_1.py
-	 # ****** Finished ingesting data ******
+	poetry run python src/make_data/main.py
+	 # ****** Finished generating data ******
 
 	# Then pretty format the index
 	bash ./scripts/upload_index_to_s3.sh
-
-
-quest-2:
-
-	poetry run python src/quest_1/quest_2.py
