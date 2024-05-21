@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Entrypoint for program which generates data
 """
