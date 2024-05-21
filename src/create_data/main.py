@@ -25,7 +25,7 @@ if __name__ == "__main__":
     measurement = CreateMeasurement()
     measurement.generate_measurement_file(
         file_name=file_name.as_posix(),
-        records=100_000_000,
+        records=1_000_000_000,
     )
     print("finished generating the data")
 
