@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime, timezone
 from typing import Set
 
 import boto3
-import httpx
-
-headers = {
-    "User-Agent": "Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
-}
+from boto3.s3.transfer import MB, TransferConfig
 
 
 class ServiceBase:
@@ -14,15 +11,22 @@ class ServiceBase:
 
     bucket_name: str
 
-    def __init__(self, s3_client: boto3.client):
+    def __init__(self, s3_client: boto3.client, bucket_name: str):
         self.s3_client = s3_client
-        self.request_session = httpx.Client(headers=headers)
+        self.bucket_name = bucket_name
 
     def upload_to_s3(self, data: bytes, file_name: str):
-        """
-        ToDo: Allow multi-part upload for very large files
-        """
         return self.s3_client.put_object(Bucket=self.bucket_name, Body=data, Key=file_name)
+
+    def upload_file(self, file_name: str):
+        dt_prefix = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d %H-%M-%S")
+        return self.s3_client.upload_file(
+            Filename=file_name,
+            Bucket=self.bucket_name,
+            Key=f"{dt_prefix} measurements.txt",
+            # trying to boost performance with these configs
+            Config=TransferConfig(multipart_threshold=8 * MB, multipart_chunksize=8 * MB, max_concurrency=50),
+        )
 
     def remove_s3_file(self, file_name: str):
         return self.s3_client.delete_object(Bucket=self.bucket_name, Key=file_name)

@@ -15,3 +15,6 @@ secrets
 htmlcov
 /tf/pytest.xml
 /tf/pytest-coverage.txt
+
+# ignore synthesized data
+**measurements.txt

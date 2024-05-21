@@ -3,9 +3,9 @@
 setup:
 	poetry install
 
-make-data:
+create-data:
 
-	poetry run python src/make_data/main.py
+	poetry run python src/create_data/main.py
 	 # ****** Finished generating data ******
 
 	# Then pretty format the index
