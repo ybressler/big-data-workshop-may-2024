@@ -11,6 +11,6 @@ Placeholder for something meaningful.
 # Make Data
 We're going to create "a lot" of data and store it in S3
 ```shell
-make make-data
+make create-data
 ```
 View data here: https://yb-big-data-workshop-1.s3-us-west-2.amazonaws.com/index.html
