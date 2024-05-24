@@ -5,6 +5,7 @@ Shamelessly copies from https://github.com/ifnesi/1brc/blob/main/createMeasureme
 
 import argparse
 from pathlib import Path
+from typing import Optional
 
 import pgzip
 import time
@@ -434,8 +435,8 @@ class CreateMeasurement:
 
     stations = pl.DataFrame(STATIONS, ("names", "means"))
 
-    def __init__(self):
-        self.rng = np.random.default_rng()
+    def __init__(self, seed: Optional[int] = None):
+        self.rng = np.random.default_rng(seed=seed)
 
     def generate_batch(self, std_dev: float = 10, records: int = 10_000_000) -> pl.DataFrame:
         batch = self.stations.sample(

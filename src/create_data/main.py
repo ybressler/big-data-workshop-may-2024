@@ -23,7 +23,7 @@ if __name__ == "__main__":
     file_name.parent.mkdir(parents=True, exist_ok=True)
 
     measurement = CreateMeasurement()
-    measurement.generate_measurement_file(file_name=file_name.as_posix(), records=1_000_000_000, compressed=True)
+    measurement.generate_measurement_file(file_name=file_name.as_posix(), records=1_0_000_000, compressed=True)
     print("finished generating the data")
 
     dt_start = datetime.datetime.now()
