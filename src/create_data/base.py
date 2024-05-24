@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Set
 
 import boto3
@@ -18,14 +19,14 @@ class ServiceBase:
     def upload_to_s3(self, data: bytes, file_name: str):
         return self.s3_client.put_object(Bucket=self.bucket_name, Body=data, Key=file_name)
 
-    def upload_file(self, file_name: str):
+    def upload_file(self, file_name: Path):
         dt_prefix = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d %H-%M-%S")
         return self.s3_client.upload_file(
             Filename=file_name,
             Bucket=self.bucket_name,
-            Key=f"{dt_prefix} measurements.txt",
+            Key=f"{dt_prefix} {file_name.name}",
             # trying to boost performance with these configs (requires some tinkering)
-            Config=TransferConfig(multipart_threshold=8 * MB, multipart_chunksize=8 * 2 * MB, max_concurrency=200),
+            Config=TransferConfig(multipart_threshold=200 * MB, multipart_chunksize=20 * MB, max_concurrency=200),
         )
 
     def remove_s3_file(self, file_name: str):
