@@ -18,5 +18,4 @@ htmlcov
 
 # ignore synthesized data
 **measurements.txt
-/tmp/
-/src/create_data/tmp/
+**/tmp/*/
