@@ -53,7 +53,7 @@ class ServiceBase:
         transfer = S3Transfer(
             self.s3_client,
             # trying to boost performance with these configs (requires some tinkering)
-            config=TransferConfig(multipart_threshold=16 * MB, multipart_chunksize=8 * MB, max_concurrency=20),
+            config=TransferConfig(multipart_threshold=16 * MB, multipart_chunksize=16 * MB, max_concurrency=200),
         )
 
         return transfer.upload_file(file_name, self.bucket_name, f"{dt_prefix} {file_name.name}", **extra_args)
