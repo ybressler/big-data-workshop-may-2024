@@ -15,7 +15,7 @@ DATA_SOURCE_S3_BUCKET = "yb-big-data-workshop-1"
 
 
 if __name__ == "__main__":
-    s3_client = boto3.Session(profile_name="yb-personal").client("s3")
+    s3_client = boto3.Session().client("s3")
     s3_service = ServiceBase(s3_client=s3_client, bucket_name=DATA_SOURCE_S3_BUCKET)
 
     file_name = Path("tmp/measurements.txt.gz")
