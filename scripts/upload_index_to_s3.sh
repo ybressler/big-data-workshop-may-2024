@@ -19,7 +19,6 @@ echo "<ul>" >> "${index_file}"
 aws s3 ls "s3://${bucket_name}/" --recursive --human-readable --profile "${profile_name}" | sort -rk4 | \
 awk '{sub(/^ +/, "", $0); print}' | \
 while read -r line; do
-    file_date=$(echo "${line}" | awk '{print $5, $6}')
     file_name=$(echo "${line}" | awk '{print $5, $6, $7}')
     file_size=$(echo "${line}" | awk '{print $3, $4}')
     echo "<li><a href=\"https://${bucket_name}.s3.amazonaws.com/${file_name}\">${file_name}</a> - ${file_size}</li>" >> "${index_file}"
