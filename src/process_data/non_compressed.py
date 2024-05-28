@@ -34,4 +34,4 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--file_name", dest="file_name", type=str, help="File name")
     args = parser.parse_args()
 
-    df = do_thing(args.file_name)
+    df = process_non_compressed_file(args.file_name)
