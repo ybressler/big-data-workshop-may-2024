@@ -16,7 +16,7 @@ echo "<p>The S3 path for these files begins with <b><code>s3://yb-big-data-works
    <b><code>s3://yb-big-data-workshop-1/<span style='color: #1E90FF;'>2024-05-21 12-00-00 measurements.txt</code></span></b> \
   </p>" >> "${index_file}"
 echo "<ul>" >> "${index_file}"
-aws s3 ls "s3://${bucket_name}/" --recursive --human-readable --profile "${profile_name}" | sort -k1 | \
+aws s3 ls "s3://${bucket_name}/" --recursive --human-readable --profile "${profile_name}" | sort -rk4 | \
 awk '{sub(/^ +/, "", $0); print}' | \
 while read -r line; do
     file_date=$(echo "${line}" | awk '{print $5, $6}')
