@@ -4,8 +4,35 @@ Placeholder for something meaningful.
 ## Getting Started:
 1. Prerequisites:
    1. poetry is installed
+      ```bash
+      which poetry
+      ```
+      If poetry not found, install it using [pipx](https://pipx.pypa.io/stable/installation/):
+      ```
+      brew install pipx
+      pipx install poetry
+      pipx ensurepath
+      source ~/.zshrc
+      ```
+   2. `pyenv` is installed
+      ```bash
+      pyenv --version
+      ```
+      If not, install it
+      ```bash
+      brew install pyenv
+      ```
+2. Install python 3.11
+   ```
+   pyenv install 3.11
+   ```
 2. Run `make setup`
-3. Install pre-commit hooks: `pre-commit run -a`
+3. Install pre-commit hooks:
+   ```shell
+   pipx install pre-commit
+   pre-commit install
+   ```
+4. Install pre-commit hooks: `pre-commit run -a`
 
 
 # Make Data
