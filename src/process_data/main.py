@@ -1,10 +1,11 @@
 """
 Process a measurements file:
-    1. If compressed, decompress
+    1. Get data from URL
+    2. If compressed, decompress
         - check first if already decompressed (no need to reprocess)
-    2. Parse date from file name
-    3. Calculate result
-    4. Store result in new file
+    3. Parse date from file name
+    4. Calculate result
+    5. Store result in new file
 
 Code credits: https://github.com/ifnesi/1brc#submitting
 """
