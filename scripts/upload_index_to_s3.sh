@@ -10,6 +10,7 @@ aws s3 rm "s3://${bucket_name}/${index_file}" --profile "${profile_name}" --only
 
 # Generate index.html
 echo "<h1>Big Data Workshop</h1>" > "${index_file}"
+# shellcheck disable=SC2129
 echo "<p>Click on a file name to download it. Click on a directory to open it.</p>" >> "${index_file}"
 echo "<p>The S3 path for these files begins with <b><code>s3://yb-big-data-workshop-1/</code></b>
   So the file <span style='color: #1E90FF'><code>2024-05-21 12-00-00 measurements.txt</code></span> becomes \
