@@ -1,7 +1,7 @@
 # Big Data Workshop
 Placeholder for something meaningful.
 
-## Getting Started:
+## Getting Started: (Mac Users)
 1. Prerequisites:
    1. poetry is installed
       ```bash
@@ -22,14 +22,34 @@ Placeholder for something meaningful.
       ```bash
       brew install pyenv
       ```
-2. Install python 3.11
+## Getting Started: (Windows Users)
+1. Install [scoop](https://scoop.sh/)
+2. Use `scoop` to install poetry and make:
+   ```shell
+   scoop install pipx
+   scoop install make
+   ```
+3. Use `pipx` to install poetry:
+   ```shell
+   pipx install poetry
+   pipx ensurepath
+   ```
+4. Install [pyenv-win](https://github.com/pyenv-win/pyenv-win):
+5. Reload your terminal
+
+## Getting Started: (All Users)
+2. Use `pyenv` to install python 3.11
    ```
    pyenv install 3.11
    ```
-2. Run `make setup`
+2. Install everything with: `make`:
+   ```shell
+   make setup
+   ```
 3. Install pre-commit hooks:
    ```shell
    pipx install pre-commit
+   pipx ensurepath
    pre-commit install
    ```
 4. Install pre-commit hooks: `pre-commit run -a`

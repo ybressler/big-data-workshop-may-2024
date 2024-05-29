@@ -27,7 +27,7 @@ if __name__ == "__main__":
     print("finished generating the data")
 
     dt_start = datetime.datetime.now()
-    # res = s3_service.upload_file(file_name, with_percentage=True)
+    res = s3_service.upload_file(file_name, with_percentage=True)
     dt_end = datetime.datetime.now()
 
     duration = (dt_end - dt_start).total_seconds()

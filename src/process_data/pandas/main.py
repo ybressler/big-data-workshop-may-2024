@@ -2,7 +2,7 @@
 """
 Process the stuff in pandas
 """
-
+import numpy as np
 import pandas as pd
 
 
@@ -50,7 +50,7 @@ class PandasThing:
                 )
                 .query("station_name == 'Alexandria'")
             )
-            # df_agg.columns = df_agg.columns.droplevel(0)
+
             df_result = pd.concat(
                 [df_result, df_agg]
             )  # .groupby(level=0)["count"].agg({"measurement": ["min", "mean", "max", "count"]})
@@ -64,12 +64,18 @@ class PandasThing:
             #         "mean": lambda s: sum(s['count'] * s['mean']) / sum(s['count']),
             #     }
             # )
+        def calc_mean():
+            ...
         # Now aggregate at the end (count * mean / count)
-        df_result.groupby(level=0).agg(
-            min=("measurement", "min"),
-            mean=("measurement", "mean"),
-            max=("measurement", "max"),
-            count=("measurement", "count"),
+        # tmp = df_result.groupby(level=0).agglambda s: pd.Series({
+        #     "corr(x, y)": np.corrcoef(s["x"], s["y"]),
+        #     "corr(x, z)": np.corrcoef(s["x"], s["z"]),
+        # })
+
+        df_result = df_result.groupby(level=0).agg(
+            min=("min", "min"),
+            max=("max", "max"),
+            count=("count", "sum"),
         )
 
         return df_result
