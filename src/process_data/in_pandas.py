@@ -9,7 +9,6 @@ import argparse
 
 def do_thing(filename: str):
     df = pd.read_csv(filename, sep=";", header=None, names=["station_name", "measurement"])
-
     print(df.head(2))
 
 
