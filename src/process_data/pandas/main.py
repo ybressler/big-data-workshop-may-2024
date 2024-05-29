@@ -2,7 +2,9 @@
 """
 Process the stuff in pandas
 """
-import numpy as np
+
+import argparse
+
 import pandas as pd
 
 
@@ -64,8 +66,9 @@ class PandasThing:
             #         "mean": lambda s: sum(s['count'] * s['mean']) / sum(s['count']),
             #     }
             # )
-        def calc_mean():
-            ...
+
+        def calc_mean(): ...
+
         # Now aggregate at the end (count * mean / count)
         # tmp = df_result.groupby(level=0).agglambda s: pd.Series({
         #     "corr(x, y)": np.corrcoef(s["x"], s["y"]),
@@ -82,9 +85,9 @@ class PandasThing:
 
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser(description="Analyze measurement file")
-    # parser.add_argument("-f", "--file_name", dest="file_name", type=str, help="File name")
-    # args = parser.parse_args()
-    file_name = "src/create_data/tmp/measurements.txt"
-    df = PandasThing.in_chunks(file_name)
-    z = df.head()
+    parser = argparse.ArgumentParser(description="Analyze measurement file")
+    parser.add_argument("-f", "--file_name", dest="file_name", type=str, help="File name")
+    args = parser.parse_args()
+
+    df = PandasThing.in_memory(args.file_name)
+    print(df.head())
