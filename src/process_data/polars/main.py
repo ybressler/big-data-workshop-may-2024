@@ -27,7 +27,6 @@ class PolarsThing:
                 this script is invoked.
         """
 
-        # Can't open in context, otherwise, will need to load all data in memory...
         df = (
             pl.read_csv(
                 filename,
@@ -83,7 +82,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     start = time.time()
-    df = PolarsThing().in_memory(args.file_name)
+    df = PolarsThing().streaming(args.file_name)
 
     duration = time.time() - start
     print(f"Duration = {duration: .2f}s")
