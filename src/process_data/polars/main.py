@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Process the stuff in pandas
+Process the stuff in polars
 """
 
 import argparse
