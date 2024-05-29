@@ -56,8 +56,10 @@ class PolarsThing:
                 this script is invoked.
         """
 
-        # Can't open in context, otherwise, will need to load all data in memory...
-        df = (
+        # Can't open a compressed file in context, otherwise, will need to load all data in memory
+        # issue: https://github.com/pola-rs/polars/issues/7287
+        # Workaround -> compress to parquet
+        return (
             pl.scan_csv(
                 filename,
                 separator=";",
@@ -73,8 +75,6 @@ class PolarsThing:
             .sort("station_name")
             .collect(streaming=True)
         )
-
-        return df
 
 
 if __name__ == "__main__":
