@@ -7,13 +7,15 @@ import argparse
 import time
 import polars as pl
 
+from src.process_data.base import BaseProcessDataInterface
 
-class PolarsThing:
+
+class PolarsInterface(BaseProcessDataInterface):
     """
     Interface for executing polars transformations.
 
     Use as follows:
-        >> df = PolarsThing.in_memory("foo.txt")
+        >> df = PolarsInterface.in_memory("foo.txt")
 
     """
 
@@ -82,7 +84,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     start = time.time()
-    df = PolarsThing().streaming(args.file_name)
+    df = PolarsInterface().streaming(args.file_name)
 
     duration = time.time() - start
     print(f"Duration = {duration: .2f}s")

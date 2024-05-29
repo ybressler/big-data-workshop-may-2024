@@ -5,19 +5,22 @@ Process the stuff in pandas
 
 import argparse
 import time
+
 import pandas as pd
 from parallel_pandas import ParallelPandas
 
+from src.process_data.base import BaseProcessDataInterface
 
-class PandasThing:
+
+class PandasInterface(BaseProcessDataInterface):
     """
     Interface for executing pandas transformations.
 
     Use as follows:
-        >> df = PandasThing.in_memory("foo.txt")
+        >> df = PandasInterface.in_memory("foo.txt")
 
     Alternatively, enable parallel processing
-        >> df = PandasThing(parallel = True).in_memory("foo.txt")
+        >> df = PandasInterface(parallel = True).in_memory("foo.txt")
 
     However, initializing with parallel processing won't really affect us,
     since most of our data processing is IO bound.
@@ -70,7 +73,7 @@ class PandasThing:
         return df_result  # noqa
 
     @classmethod
-    def in_chunks(cls, filename: str, chunksize: int = 1_000_000) -> pd.DataFrame:
+    def streaming(cls, filename: str, chunksize: int = 1_000_000) -> pd.DataFrame:
         """
         Process parts of the file, concat results, and continue
 
@@ -98,7 +101,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     start = time.time()
-    df = PandasThing().in_chunks(args.file_name)
+    df = PandasInterface().streaming(args.file_name)
 
     duration = time.time() - start
     print(f"Duration = {duration: .2f}s")
