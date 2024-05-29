@@ -39,6 +39,37 @@ class PandasThing:
         return df_agg
 
     @classmethod
+    def process_chunk(cls, chunk: pd.DataFrame, df_result: pd.DataFrame) -> pd.DataFrame:
+        """
+        Used to process a stream or chunks from a df, common between pandas.chunks and streaming
+        """
+
+        df_agg = chunk.groupby("station_name", as_index=True).agg(
+            min=("measurement", "min"),
+            mean=("measurement", "mean"),
+            max=("measurement", "max"),
+            count=("measurement", "count"),
+        )
+
+        # Calculate the mean after each step
+        df_result = (
+            pd.concat([df_result, df_agg])
+            .groupby(level=0)
+            .apply(
+                lambda s: pd.Series(
+                    {
+                        "min": s["min"].min(),
+                        "mean": (s["count"] * s["mean"]).sum() / s["count"].sum(),  # sum(n * mean) / sum(n)
+                        "max": s["max"].max(),
+                        "count": s["count"].sum(),
+                    }
+                )
+            )
+        )
+
+        return df_result
+
+    @classmethod
     def in_chunks(cls, filename: str, chunksize: int = 1_000_000) -> pd.DataFrame:
         """
         Process parts of the file, concat results, and continue
@@ -56,28 +87,7 @@ class PandasThing:
             filename, sep=";", header=None, names=["station_name", "measurement"], chunksize=chunksize
         )
         for chunk in lazy_df:
-            df_agg = chunk.groupby("station_name", as_index=True).agg(
-                min=("measurement", "min"),
-                mean=("measurement", "mean"),
-                max=("measurement", "max"),
-                count=("measurement", "count"),
-            )
-
-            # Calculate the mean
-            df_result = (
-                pd.concat([df_result, df_agg])
-                .groupby(level=0)
-                .apply(
-                    lambda s: pd.Series(
-                        {
-                            "min": s["min"].min(),
-                            "mean": (s["count"] * s["mean"]).sum() / s["count"].sum(),  # sum(n * mean) / sum(n)
-                            "max": s["max"].max(),
-                            "count": s["count"].sum(),
-                        }
-                    )
-                )
-            )
+            df_result = cls.process_chunk(chunk, df_result)
 
         return df_result
 
@@ -88,7 +98,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     start = time.time()
-    df = PandasThing().in_chunks(args.file_name, chunksize=10_000_000)
+    df = PandasThing().in_chunks(args.file_name)
 
     duration = time.time() - start
     print(f"Duration = {duration: .2f}s")
