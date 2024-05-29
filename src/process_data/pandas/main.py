@@ -4,29 +4,49 @@ Process the stuff in pandas
 """
 
 import argparse
-
+import time
 import pandas as pd
+from parallel_pandas import ParallelPandas
 
 
 class PandasThing:
+    """
+    Interface for executing pandas transformations.
+
+    Use as follows:
+        >> df = PandasThing.in_memory("foo.txt")
+
+    Alternatively, enable parallel processing
+        >> df = PandasThing(parallel = True).in_memory("foo.txt")
+
+    However, initializing with parallel processing won't really affect us,
+    since most of our data processing is IO bound.
+    """
+
+    def __init__(self, parallel: bool = False):
+        if parallel:
+            # initialize parallel-pandas
+            ParallelPandas.initialize(n_cpu=8, split_factor=2)
+
     @classmethod
-    def in_memory(cls, filename: str):
+    def in_memory(cls, filename: str) -> pd.DataFrame:
         """
         Load the whole file in memory
         """
         df = pd.read_csv(filename, sep=";", header=None, names=["station_name", "measurement"])
-        df_agg = (
-            df.groupby("station_name")
-            .agg({"measurement": ["min", "mean", "max"]})
-            .query("station_name == 'Alexandria'")
-        )
+        df_agg = df.groupby("station_name").agg({"measurement": ["min", "mean", "max"]})
 
         return df_agg
 
     @classmethod
-    def in_chunks(cls, filename: str, chunksize: int = 100_000):
+    def in_chunks(cls, filename: str, chunksize: int = 1_000_000) -> pd.DataFrame:
         """
-        Process parts of the file, then concat results
+        Process parts of the file, concat results, and continue
+
+        Args:
+            filename: Name of the file. Should be relative path to the location where
+                this script is invoked.
+            chunksize: Number of rows to be read per iteration. (Reduce load on memory)
         """
 
         df_result = pd.DataFrame()
@@ -36,52 +56,40 @@ class PandasThing:
             filename, sep=";", header=None, names=["station_name", "measurement"], chunksize=chunksize
         )
         for chunk in lazy_df:
-            df_agg = (
-                chunk.groupby("station_name", as_index=True)
-                .agg(
-                    min=("measurement", "min"),
-                    mean=("measurement", "mean"),
-                    max=("measurement", "max"),
-                    count=("measurement", "count"),
-                )
-                .query("station_name == 'Alexandria'")
+            df_agg = chunk.groupby("station_name", as_index=True).agg(
+                min=("measurement", "min"),
+                mean=("measurement", "mean"),
+                max=("measurement", "max"),
+                count=("measurement", "count"),
             )
 
-            df_result = pd.concat(
-                [df_result, df_agg]
-            )  # .groupby(level=0)["count"].agg({"measurement": ["min", "mean", "max", "count"]})
-            # df_result.columns = ["min", "mean", "max", "count"]
-            # Take the avg between rows
-            # df_result = df_result.groupby(level=0).agg(
-            #     {
-            #         "min": min,
-            #         "max": max,
-            #         "count": "count",
-            #         "mean": lambda s: sum(s['count'] * s['mean']) / sum(s['count']),
-            #     }
-            # )
-
-        def calc_mean(): ...
-
-        # Now aggregate at the end (count * mean / count)
-        # tmp = df_result.groupby(level=0).agglambda s: pd.Series({
-        #     "corr(x, y)": np.corrcoef(s["x"], s["y"]),
-        #     "corr(x, z)": np.corrcoef(s["x"], s["z"]),
-        # })
-
-        df_result = df_result.groupby(level=0).agg(
-            min=("min", "min"),
-            max=("max", "max"),
-            count=("count", "sum"),
-        )
+            # Calculate the mean
+            df_result = (
+                pd.concat([df_result, df_agg])
+                .groupby(level=0)
+                .apply(
+                    lambda s: pd.Series(
+                        {
+                            "min": s["min"].min(),
+                            "mean": (s["count"] * s["mean"]).sum() / s["count"].sum(),  # sum(n * mean) / sum(n)
+                            "max": s["max"].max(),
+                            "count": s["count"].sum(),
+                        }
+                    )
+                )
+            )
 
         return df_result
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Analyze measurement file")
-    parser.add_argument("-f", "--file_name", dest="file_name", type=str, help="File name")
+    parser.add_argument("-f", "--file_name", dest="file_name", type=str, help="File name", default="measurements.txt")
     args = parser.parse_args()
 
-    df = PandasThing.in_memory(args.file_name)
-    print(df.head())
+    start = time.time()
+    df = PandasThing().in_chunks(args.file_name, chunksize=10_000_000)
+
+    duration = time.time() - start
+    print(f"Duration = {duration: .2f}s")
+    print(df.query("station_name == 'Alexandria'").head())

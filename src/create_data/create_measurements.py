@@ -516,11 +516,17 @@ if __name__ == "__main__":
         type=min_records,
         default=1_000_000_000,
     )
+    parser.add_argument(
+        "--compressed",
+        help="Compress data in gzip file?",
+        dest="compressed",
+        type=bool,
+        default=False,
+    )
 
     args = parser.parse_args()
 
+    print(args)
+
     measurement = CreateMeasurement()
-    measurement.generate_measurement_file(
-        file_name=args.output,
-        records=args.records,
-    )
+    measurement.generate_measurement_file(file_name=args.output, records=args.records, compressed=args.compressed)
