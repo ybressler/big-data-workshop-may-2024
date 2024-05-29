@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Process the stuff in pandas
+
+Resources:
+    1. Pandas documentation: https://pandas.pydata.org/docs/index.html
 """
 
 import argparse

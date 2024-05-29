@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Process the stuff in dask
+
+Resources:
+    1. Dask documentation: https://docs.dask.org/en/stable/
 """
 
 import argparse

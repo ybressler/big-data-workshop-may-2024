@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Process the stuff in polars
+
+Resources:
+    1. Polars documentation: https://docs.pola.rs/
 """
 
 import argparse
