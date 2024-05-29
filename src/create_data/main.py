@@ -18,20 +18,20 @@ if __name__ == "__main__":
     s3_client = boto3.Session(profile_name="yb-personal").client("s3")
     s3_service = ServiceBase(s3_client=s3_client, bucket_name=DATA_SOURCE_S3_BUCKET)
 
-    file_name = Path("tmp/measurements.txt.gz")
+    file_name = Path("tmp/measurements.txt")
     # Make the directory if you need to
     file_name.parent.mkdir(parents=True, exist_ok=True)
 
     measurement = CreateMeasurement()
-    measurement.generate_measurement_file(file_name=file_name.as_posix(), records=10_000_000, compressed=True)
+    measurement.generate_measurement_file(file_name=file_name.as_posix(), records=10_000_000, compressed=False)
     print("finished generating the data")
 
     dt_start = datetime.datetime.now()
-    res = s3_service.upload_file(file_name, with_percentage=True)
+    # res = s3_service.upload_file(file_name, with_percentage=True)
     dt_end = datetime.datetime.now()
 
     duration = (dt_end - dt_start).total_seconds()
     print(f"finished uploading the data to S3, took {duration:,} seconds")
 
-    file_name.unlink()
+    # file_name.unlink()
     print("finished deleting the data locally")

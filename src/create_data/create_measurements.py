@@ -465,6 +465,8 @@ class CreateMeasurement:
 
         if compressed and not file_name.endswith(".gz"):
             file_name = f"{file_name}.gz"
+        elif not compressed and file_name.endswith(".gz"):
+            file_name = file_name.replace(".gz", "")
 
         print(f"Creating measurement file '{file_name}' with {records:,} measurements...")
         start = time.time()

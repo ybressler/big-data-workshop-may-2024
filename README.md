@@ -45,3 +45,7 @@ View data here: https://yb-big-data-workshop-1.s3-us-west-2.amazonaws.com/index.
 ## Compressing data
 Compressing the data decreases its size by 10X. We can compress it when writing directly in polars
 using `pgzip.open(...)`. (Note: `pgzip` is the parallel implementation of `gzip`.)
+
+
+## Resources:
+This article is inspiration: [Python One Billion Row Challenge — From 10 Minutes to 4 Seconds](https://medium.com/towards-data-science/python-one-billion-row-challenge-from-10-minutes-to-4-seconds-0718662b303e)
