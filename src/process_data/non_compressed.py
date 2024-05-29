@@ -25,7 +25,9 @@ def process_non_compressed_file(file_name: str):
         .collect(streaming=True)
     )
 
-    df.write_csv(file_name.replace(".txt", "") + " - results.csv", separator=",")
+    results_file_name = file_name.replace(".txt", "") + " - results.csv"
+    print(f"Writing results to {results_file_name}")
+    df.write_csv(results_file_name, separator=",")
     return df
 
 
