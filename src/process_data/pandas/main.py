@@ -31,13 +31,7 @@ class PandasThing:
 
         df_result = pd.DataFrame()
 
-        # # merge previously aggregated DF with a new portion of data and aggregate it again
-        # df = (pd.concat([df,
-        #                  chunk.groupby('Geography')['Count'].sum().to_frame()])
-        #       .groupby(level=0)['Count']
-        #       .sum()
-        #       .to_frame()
-        #       )
+        # merge previously aggregated DF with a new portion of data and aggregate it again
         lazy_df = pd.read_csv(
             filename, sep=";", header=None, names=["station_name", "measurement"], chunksize=chunksize
         )
