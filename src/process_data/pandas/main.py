@@ -67,7 +67,7 @@ class PandasThing:
             )
         )
 
-        return df_result
+        return df_result  # noqa
 
     @classmethod
     def in_chunks(cls, filename: str, chunksize: int = 1_000_000) -> pd.DataFrame:
