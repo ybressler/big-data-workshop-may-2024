@@ -21,3 +21,5 @@ htmlcov
 **/tmp/
 /src/create_data/tmp/
 !/src/download_data/tmp/
+
+dist/
