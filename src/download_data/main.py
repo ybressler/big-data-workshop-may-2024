@@ -8,6 +8,7 @@ from typing import List
 import re
 from pathlib import Path
 
+import polars as pl
 import requests
 from pgzip import pgzip
 from tqdm import tqdm
@@ -103,8 +104,16 @@ def decompress_file_with_progress_bar(file_name: Path):
                 progress_bar.update(len(chunk))
 
 
+def convert_txt_to_parquet(file_name: Path, dst_file_name: Path) -> Path:
+    """Convert txt data to parquet format"""
+
+    df = pl.read_csv(file_name, separator=";", has_header=False, new_columns=["station_name", "measurement"])
+    df.write_parquet(dst_file_name)
+
+
 if __name__ == "__main__":
-    urls = get_all_urls()
+    # urls = get_all_urls()
+    urls = []
 
     dst_dir = Path(RAW_DATA_PATH)
     # Make the directory if you need to
@@ -129,3 +138,18 @@ if __name__ == "__main__":
             print(f"already decompressed '{file_name}'")
         else:
             decompress_file(file_name, True)
+
+    # now convert to parquet
+    for file_name in dst_dir.iterdir():
+        if file_name.suffix != ".txt":
+            continue
+
+        new_parts = ["clean" if x == "raw" else x for x in file_name.parts]
+        dst_file_name = Path(*new_parts).with_suffix(".parquet")
+        dst_file_name.parent.mkdir(parents=True, exist_ok=True)
+
+        if dst_file_name.exists():
+            print(f"already converted '{file_name}' to parquet --> {dst_file_name}")
+        else:
+            parquet_file = convert_txt_to_parquet(file_name, dst_file_name)
+            print(f"finished converting '{file_name}' to parquet --> {dst_file_name}")

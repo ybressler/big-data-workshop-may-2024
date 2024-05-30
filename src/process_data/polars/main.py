@@ -8,6 +8,8 @@ Resources:
 
 import argparse
 import time
+from functools import partial
+
 import polars as pl
 
 from src.process_data.base import BaseProcessDataInterface
@@ -31,14 +33,13 @@ class PolarsInterface(BaseProcessDataInterface):
             filename: Name of the file. Should be relative path to the location where
                 this script is invoked.
         """
+        if filename.endswith((".csv", ".txt")):
+            loader = partial(pl.read_csv, separator=";", has_header=False, new_columns=["station_name", "measurement"])
+        elif filename.endswith(".parquet"):
+            loader = pl.read_parquet
 
         df = (
-            pl.read_csv(
-                filename,
-                separator=";",
-                has_header=False,
-                new_columns=["station_name", "measurement"],
-            )
+            loader(filename)
             .group_by("station_name")
             .agg(
                 pl.min("measurement").alias("min_measurement"),
@@ -80,6 +81,25 @@ class PolarsInterface(BaseProcessDataInterface):
             .collect(streaming=True)
         )
 
+    @classmethod
+    def streaming_parquet(cls, filename: str) -> pl.DataFrame:
+        """
+        Duplicate method, to make it easier for people to understand.
+        """
+        return (
+            pl.scan_parquet(
+                filename,
+            )
+            .group_by("station_name")
+            .agg(
+                pl.min("measurement").alias("min_measurement"),
+                pl.mean("measurement").alias("mean_measurement"),
+                pl.max("measurement").alias("max_measurement"),
+            )
+            .sort("station_name")
+            .collect(streaming=True)
+        )
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Analyze measurement file")
@@ -87,7 +107,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     start = time.time()
-    df = PolarsInterface().streaming(args.file_name)
+    if args.file_name.endswith((".csv", ".txt")):
+        df = PolarsInterface().streaming(args.file_name)
+    else:
+        df = PolarsInterface().streaming_parquet(args.file_name)
 
     duration = time.time() - start
     print(f"Duration = {duration: .2f}s")
