@@ -16,6 +16,11 @@ from src.download_data.main import (
 from src.process_data.duckdb.main import DuckDBInterface
 
 dst_dir = Path(RAW_DATA_PATH)
+clean_dir = Path("tmp/clean")
+result_dir = Path("tmp/results")
+
+for p in [dst_dir, clean_dir, result_dir]:
+    p.mkdir(parents=True, exist_ok=True)
 
 
 @asset
@@ -86,7 +91,7 @@ def dg_convert_to_parquet(context: AssetExecutionContext) -> MaterializeResult:
 
 
 ResultDataFrame = create_dagster_pandas_dataframe_type(
-    name="TripDataFrame",
+    name="ResultDataFrame",
     columns=[
         PandasColumn.string_column("station_name"),
         PandasColumn.float_column("min_measurement"),
@@ -96,16 +101,25 @@ ResultDataFrame = create_dagster_pandas_dataframe_type(
 )
 
 
-@asset
-def calculate_parquet(context: AssetExecutionContext, dg_convert_to_parquet: Any) -> ResultDataFrame:
-    context.log.info(dg_convert_to_parquet)
-    parquet_file_name = dg_convert_to_parquet.metadata["file_names"][0]
-    result = DuckDBInterface().in_memory(parquet_file_name)
-    context.log.info(result.query("station_name == 'Alexandria'").head().to_markdown())
-    return result
-    return MaterializeResult(
-        metadata={
-            "n_rows": len(result),
-            "preview": MetadataValue.md(result.head().to_markdown()),
-        }
-    )
+@asset(deps=[dg_convert_to_parquet])
+def calculate_parquet(context: AssetExecutionContext) -> MaterializeResult:
+    """
+    Performs main calculation and stores results in a csv file
+    """
+
+    for parquet_file_name in clean_dir.iterdir():
+        context.log.info(f"Processing data for '{parquet_file_name}'")
+        result = DuckDBInterface().in_memory(parquet_file_name.as_posix())
+        context.log.info(result.query("station_name == 'Alexandria'").head().to_markdown())
+
+        # save results
+        result_path = result_dir / Path(parquet_file_name).with_suffix(".csv").name
+        result.to_csv(result_path)
+
+        return MaterializeResult(
+            metadata={
+                "n_rows": len(result),
+                "preview": MetadataValue.md(result.head().to_markdown()),
+                "result_file_location": result_path.as_posix(),
+            }
+        )
