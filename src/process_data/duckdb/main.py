@@ -34,22 +34,31 @@ class DuckDBInterface(BaseProcessDataInterface):
                 this script is invoked.
         """
 
-        with duckdb.connect() as conn:
-            data = conn.sql(f"""
-                select
-                    station_name,
-                    min(measurement) as min_measurement,
-                    cast(avg(measurement) as decimal(8, 1)) as mean_measurement,
-                    max(measurement) as max_measurement
-                from read_csv(
+        if filename.endswith((".txt", ".csv")):
+            sql_from = f"""
+            read_csv(
                     "{filename}",
                     header=false,
                     columns={{'station_name': 'varchar', 'measurement': 'decimal(8, 1)'}},
                     delim=';',
                     parallel=true
                 )
-                group by station_name
-                order by station_name
+            """
+        elif filename.endswith(".parquet"):
+            sql_from = f"parquet_scan('{filename}')"
+        else:
+            raise ValueError()
+
+        with duckdb.connect() as conn:
+            data = conn.sql(f"""
+                SELECT
+                    station_name,
+                    min(measurement) as min_measurement,
+                    cast(avg(measurement) as decimal(8, 1)) as mean_measurement,
+                    max(measurement) as max_measurement
+                FROM {sql_from}
+                GROUP BY station_name
+                ORDER BY station_name
             """)
 
             return data.df()

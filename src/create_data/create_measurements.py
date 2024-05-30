@@ -526,7 +526,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    print(args)
-
     measurement = CreateMeasurement()
     measurement.generate_measurement_file(file_name=args.output, records=args.records, compressed=args.compressed)
