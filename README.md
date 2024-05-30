@@ -38,9 +38,9 @@ Placeholder for something meaningful.
 5. Reload your terminal
 
 ## Getting Started: (All Users)
-2. Use `pyenv` to install python 3.11
+2. Use `pyenv` to install python 3.11.6
    ```
-   pyenv install 3.11
+   pyenv install 3.11.6
    ```
 2. Install everything with: `make`:
    ```shell
