@@ -472,21 +472,6 @@ requests = "*"
 starlette = "*"
 
 [[package]]
-name = "dagster-pandas"
-version = "0.23.8"
-description = "Utilities and examples for working with pandas and dagster, an opinionated framework for expressing data pipelines"
-optional = false
-python-versions = "<3.13,>=3.8"
-files = [
-    {file = "dagster-pandas-0.23.8.tar.gz", hash = "sha256:3a4605e028375fa51f946550b42c326ab02be08bd5f33be919304e1a87d53676"},
-    {file = "dagster_pandas-0.23.8-py3-none-any.whl", hash = "sha256:35e11cfc9f23901ab3d87cf0de02661a8502c4fcd26336990687176297754add"},
-]
-
-[package.dependencies]
-dagster = "1.7.8"
-pandas = "*"
-
-[[package]]
 name = "dagster-pipes"
 version = "1.7.8"
 description = "Toolkit for Dagster integrations with transform logic outside of Dagster"
@@ -2998,4 +2983,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "3.11.6"
-content-hash = "e1b299261ef01e4182313fd5936fbb2158bb66bf248b3482f3f5f665d85f2a62"
+content-hash = "919b7bc472661266d77cda016f925ffe913cbd90f7e32ef26047952eabd5d5fb"

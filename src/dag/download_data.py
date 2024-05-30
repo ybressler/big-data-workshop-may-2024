@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Any, List
 
 from dagster import AssetExecutionContext, MaterializeResult, MetadataValue, asset
-from dagster_pandas import PandasColumn, create_dagster_pandas_dataframe_type
 
 from src.download_data.main import (
     RAW_DATA_PATH,
@@ -88,17 +87,6 @@ def dg_convert_to_parquet(context: AssetExecutionContext) -> MaterializeResult:
             "file_names": [x.as_posix() for x in parquet_file_names],
         }
     )
-
-
-ResultDataFrame = create_dagster_pandas_dataframe_type(
-    name="ResultDataFrame",
-    columns=[
-        PandasColumn.string_column("station_name"),
-        PandasColumn.float_column("min_measurement"),
-        PandasColumn.float_column("mean_measurement"),
-        PandasColumn.float_column("max_measurement"),
-    ],
-)
 
 
 @asset(deps=[dg_convert_to_parquet])

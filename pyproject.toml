@@ -23,7 +23,6 @@ bs4 = "^0.0.2"
 duckdb = "^0.10.3"
 dagster = "^1.7.7"
 dagster-webserver = "^1.7.7"
-dagster-pandas = "^0.23.8"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "*"
